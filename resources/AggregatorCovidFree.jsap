@@ -44,13 +44,11 @@
     "dct": "http://purl.org/dc/terms/",
     "org": "http://www.w3.org/ns/org#",
     "foaf": "http://xmlns.com/foaf/0.1/",
-
     "sdmx-attribute": "http://purl.org/linked-data/sdmx/2009/attribute#",
     "sdmx-dimension": "http://purl.org/linked-data/sdmx/2009/dimension#",
     "sdmx-concept": "http://purl.org/linked-data/sdmx/2009/concept#",
     "sdmx-measure": "http://purl.org/linked-data/sdmx/2009/measure#",
     "sdmx-subject": "http://purl.org/linked-data/sdmx/2009/subject#",
-    
     "covidFree": "http://dataCube/covidFree#",
     "covidFreeContext": "http://dataCube/covidFree/context#"
   },
@@ -81,7 +79,7 @@
       "sparql": "WITH <http://dataCube/covidFree/context> INSERT { covidFreeContext:contagiGiornalieri-dsd rdf:type qb:DataStructureDefinition ; qb:component [ qb:dimension covidFreeContext:region ; qb:order 1 ] ; qb:component [ qb:dimension covidFreeContext:timestamp ; qb:order 2 ] ; qb:component [ qb:measure covidFreeContext:dailyPositiveCases ] ; qb:component [ qb:attribute sdmx-attribute:unitMeasure ; qb:componentRequired 'true'^^xsd:boolean ] . }"
     },
     "CREATE_MEASURE": {
-      "sparql": "WITH <http://dataCube/covidFree/context> INSERT { covidFreeContext:dailyPositiveCases rdf:type rdf:Property, qb:MeasureProperty ; rdfs:label 'Daily positive cases'@en, 'Casi positivi giornalieri'@it ; rdfs:subPropertyOf sdmx-measure:obsValue ; rdfs:range xsd:integer . "
+      "sparql": "WITH <http://dataCube/covidFree/context> INSERT { covidFreeContext:dailyPositiveCases rdf:type rdf:Property, qb:MeasureProperty ; rdfs:label 'Daily positive cases'@en, 'Casi positivi giornalieri'@it ; rdfs:subPropertyOf sdmx-measure:obsValue ; rdfs:range xsd:integer . }"
     },
     "CREATE_DIMENSION_REGION": {
       "sparql": "WITH <http://dataCube/covidFree/context> INSERT { covidFreeContext:region rdf:type rdf:Property, qb:DimensionProperty ; rdfs:label 'Region'@en, 'Regione'@it ; rdfs:subPropertyOf sdmx-dimension:refArea ; rdfs:range gn:Feature ; qb:concept sdmx-concept:refArea . }"
@@ -94,6 +92,15 @@
     },
     "DELETE_CONTEXT": {
       "sparql": "WITH <http://dataCube/covidFree/context> DELETE { ?s ?p ?o } WHERE { ?s ?p ?o }"
+    },
+    "DELETE_SINCE": {
+      "sparql": "WITH <http://dataCube/covidFree> DELETE { ?s ?p ?o } WHERE { ?s ?p ?o ; covidFreeContext:timestamp ?timestamp . FILTER (?timestamp >= ?since) }",
+      "forcedBindings": {
+        "since": {
+          "type": "literal",
+          "datatype": "xsd:dateTime"
+        }
+      }
     }
   },
   "queries": {
