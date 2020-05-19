@@ -1,4 +1,4 @@
-package aggregator;
+package util;
 
 import java.time.Duration;
 import java.time.Instant;

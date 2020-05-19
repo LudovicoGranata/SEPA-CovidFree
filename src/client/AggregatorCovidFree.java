@@ -1,4 +1,4 @@
-package aggregator;
+package client;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -16,6 +16,7 @@ import it.unibo.arces.wot.sepa.commons.sparql.RDFTermURI;
 import it.unibo.arces.wot.sepa.pattern.Aggregator;
 import it.unibo.arces.wot.sepa.pattern.JSAP;
 import it.unibo.arces.wot.sepa.pattern.Producer;
+import util.DateHelper;
 
 public class AggregatorCovidFree extends Aggregator {
 
