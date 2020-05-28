@@ -20,8 +20,8 @@ import util.DateHelper;
 
 public class AggregatorCovidFree extends Aggregator {
 
-	private boolean firstResultsLoaded;
-	private Instant today;
+	private boolean firstResultsLoaded = false;
+	private Instant today = Instant.now().truncatedTo(ChronoUnit.DAYS);
 
 	public AggregatorCovidFree(JSAP appProfile, String subscribeID, String updateID, ClientSecurityManager sm)
 			throws SEPAProtocolException, SEPASecurityException {
@@ -94,18 +94,20 @@ public class AggregatorCovidFree extends Aggregator {
 			counter++;
 			System.out.println(counter);
 		}
+		this.today = Instant.now().truncatedTo(ChronoUnit.DAYS);
 	}
 
-	@Override
-	public void onBrokenConnection() {
-		this.today = Instant.now().truncatedTo(ChronoUnit.DAYS);
-		if (this.firstResultsLoaded) {
-			deleteToday();
-		} else {
-			this.exec("DELETE");
-		}
-		super.onBrokenConnection();
-	}
+//	@Override
+//	public void onBrokenConnection() {
+//		System.out.println("BROKEN CONNECTION");
+//		this.today = Instant.now().truncatedTo(ChronoUnit.DAYS);
+//		if (this.firstResultsLoaded) {
+//			deleteToday();
+//		} else {
+//			this.exec("DELETE");
+//		}
+//		super.onBrokenConnection();
+//	}
 
 	private void deleteToday() {
 		try {
