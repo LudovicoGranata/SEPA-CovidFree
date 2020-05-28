@@ -41,7 +41,7 @@ public class MySqlObservationDAO {
 			prep_stmt.close();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 		
 		return outcome;
@@ -202,6 +202,33 @@ public class MySqlObservationDAO {
 		
 		return outcome;
 	}
+	
+	public boolean deleteByRegionAndTimestamp(ObservationDTO observation) {
+		boolean outcome = false;
+		if ( observation == null )  {
+			System.out.println("delete(): cannot delete a null entry");
+			return outcome;
+		}
+		Connection conn = ConnectionFactory.createConnection();
+		try {
+			String delete = 
+					"DELETE " +
+						"FROM " + TABLE + " " +
+						"WHERE " + REGION + " = ? AND " + TIMESTAMP + " = ?";
+			PreparedStatement prep_stmt = conn.prepareStatement(delete);
+			prep_stmt.clearParameters();
+			prep_stmt.setString(1, observation.getRegion());
+			prep_stmt.setTimestamp(2, DateHelper.fromJavaToSql(observation.getTimestamp()));
+			prep_stmt.executeUpdate();
+			outcome = true;
+			prep_stmt.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return outcome;
+	}
 
 	public boolean createTable() {
 		boolean outcome = false;
@@ -214,8 +241,9 @@ public class MySqlObservationDAO {
 							ID + " INT NOT NULL PRIMARY KEY, " +
 							REGION + " VARCHAR(255) NOT NULL, " +
 							TIMESTAMP + " DATETIME NOT NULL, " +
-							VALUE + " INT NOT NULL" +
-						" )";
+							VALUE + " INT NOT NULL, " +
+							"UNIQUE (" + REGION + ", " + TIMESTAMP + ") "
+						+ ")";
 			stmt.execute(create);
 			outcome = true;
 			stmt.close();
