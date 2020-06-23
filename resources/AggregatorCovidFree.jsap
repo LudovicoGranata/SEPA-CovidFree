@@ -50,11 +50,12 @@
     "sdmx-measure": "http://purl.org/linked-data/sdmx/2009/measure#",
     "sdmx-subject": "http://purl.org/linked-data/sdmx/2009/subject#",
     "covidFree": "http://dataCube/covidFree#",
-    "covidFreeContext": "http://dataCube/covidFree/context#"
+    "covidFreeContext": "http://dataCube/covidFree/context#",
+    "xsd": "http://www.w3.org/2001/XMLSchema#"
   },
   "updates": {
     "INSERT_OBSERVATION": {
-      "sparql": "WITH <http://dataCube/covidFree> INSERT { [] rdf:type qb:Observation; qb:dataSet covidFreeContext:contagiGiornalieri ; covidFreeContext:region ?region ;  covidFreeContext:timestamp  ?timestamp ; sdmx-attribute:unitMeasure unit:Number ; covidFreeContext:dailyPositiveCases ?value . }",
+      "sparql": "WITH <http://dataCube/covidFree> INSERT { [] rdf:type qb:Observation; qb:dataSet covidFreeContext:contagiGiornalieri ; covidFreeContext:region ?region ;  covidFreeContext:timestamp  ?timestamp ; sdmx-attribute:unitMeasure unit:Number ; covidFreeContext:dailyPositiveCases ?value . } WHERE {}",
       "forcedBindings": {
         "region": {
           "type": "uri"
@@ -70,22 +71,22 @@
       }
     },
     "CREATE_DATASET": {
-      "sparql": "WITH <http://dataCube/covidFree/context> INSERT { covidFreeContext:contagiGiornalieri rdf:type qb:DataSet ; qb:structure covidFreeContext:contagiGiornalieri-dsd ; dct:title 'Covid19-Free dataset'@en ; rdfs:label 'Covid19-Free dataset'@en ; dct:description 'Daily positive Covid-19 cases for each italian region'@en , 'Numero di contagi giornalieri per Covid-19 nelle regioni italiane'@it ; rdfs:comment 'Daily positive Covid-19 cases for each italian region'@en , 'Numero di contagi giornalieri per Covid-19 nelle regioni italiane'@it ; dct:issued '2020-05-13'^^xsd:date ; dct:modified '2020-05-13'^^xsd:date ; dct:subject sdmx-subject:3.2 , sdmx-subject:1.4 ; dct:publisher covidFreeContext:arces ; dct:license <http://creativecommons.org/licenses/by/4.0/> . }"
+      "sparql": "WITH <http://dataCube/covidFree/context> INSERT { covidFreeContext:contagiGiornalieri rdf:type qb:DataSet ; qb:structure covidFreeContext:contagiGiornalieri-dsd ; dct:title 'Covid19-Free dataset'@en ; rdfs:label 'Covid19-Free dataset'@en ; dct:description 'Daily positive Covid-19 cases for each italian region'@en , 'Numero di contagi giornalieri per Covid-19 nelle regioni italiane'@it ; rdfs:comment 'Daily positive Covid-19 cases for each italian region'@en , 'Numero di contagi giornalieri per Covid-19 nelle regioni italiane'@it ; dct:issued '2020-05-13'^^xsd:date ; dct:modified '2020-05-13'^^xsd:date ; dct:subject sdmx-subject:3.2 , sdmx-subject:1.4 ; dct:publisher covidFreeContext:arces ; dct:license <http://creativecommons.org/licenses/by/4.0/> . } WHERE {}"
     },
     "CREATE_ORGANIZATION": {
-      "sparql": "WITH <http://dataCube/covidFree/context> INSERT { covidFreeContext:arces rdf:type org:Organization, foaf:Agent ; rdfs:label 'ARCES Unibo' . }"
+      "sparql": "WITH <http://dataCube/covidFree/context> INSERT { covidFreeContext:arces rdf:type org:Organization, foaf:Agent ; rdfs:label 'ARCES Unibo' . } WHERE {}"
     },
     "CREATE_DSD": {
-      "sparql": "WITH <http://dataCube/covidFree/context> INSERT { covidFreeContext:contagiGiornalieri-dsd rdf:type qb:DataStructureDefinition ; qb:component [ qb:dimension covidFreeContext:region ; qb:order 1 ] ; qb:component [ qb:dimension covidFreeContext:timestamp ; qb:order 2 ] ; qb:component [ qb:measure covidFreeContext:dailyPositiveCases ] ; qb:component [ qb:attribute sdmx-attribute:unitMeasure ; qb:componentRequired 'true'^^xsd:boolean ] . }"
+      "sparql": "WITH <http://dataCube/covidFree/context> INSERT { covidFreeContext:contagiGiornalieri-dsd rdf:type qb:DataStructureDefinition ; qb:component [ qb:dimension covidFreeContext:region ; qb:order 1 ] ; qb:component [ qb:dimension covidFreeContext:timestamp ; qb:order 2 ] ; qb:component [ qb:measure covidFreeContext:dailyPositiveCases ] ; qb:component [ qb:attribute sdmx-attribute:unitMeasure ; qb:componentRequired 'true'^^xsd:boolean ] . } WHERE {}"
     },
     "CREATE_MEASURE": {
-      "sparql": "WITH <http://dataCube/covidFree/context> INSERT { covidFreeContext:dailyPositiveCases rdf:type rdf:Property, qb:MeasureProperty ; rdfs:label 'Daily positive cases'@en, 'Casi positivi giornalieri'@it ; rdfs:subPropertyOf sdmx-measure:obsValue ; rdfs:range xsd:integer . }"
+      "sparql": "WITH <http://dataCube/covidFree/context> INSERT { covidFreeContext:dailyPositiveCases rdf:type rdf:Property, qb:MeasureProperty ; rdfs:label 'Daily positive cases'@en, 'Casi positivi giornalieri'@it ; rdfs:subPropertyOf sdmx-measure:obsValue ; rdfs:range xsd:integer . } WHERE {}"
     },
     "CREATE_DIMENSION_REGION": {
-      "sparql": "WITH <http://dataCube/covidFree/context> INSERT { covidFreeContext:region rdf:type rdf:Property, qb:DimensionProperty ; rdfs:label 'Region'@en, 'Regione'@it ; rdfs:subPropertyOf sdmx-dimension:refArea ; rdfs:range gn:Feature ; qb:concept sdmx-concept:refArea . }"
+      "sparql": "WITH <http://dataCube/covidFree/context> INSERT { covidFreeContext:region rdf:type rdf:Property, qb:DimensionProperty ; rdfs:label 'Region'@en, 'Regione'@it ; rdfs:subPropertyOf sdmx-dimension:refArea ; rdfs:range gn:Feature ; qb:concept sdmx-concept:refArea . } WHERE {}"
     },
     "CREATE_DIMENSION_TIMESTAMP": {
-      "sparql": "WITH <http://dataCube/covidFree/context> INSERT { covidFreeContext:timestamp rdf:type rdf:Property, qb:DimensionProperty ; rdfs:label 'Result time'@en, 'Data rilevazione'@it ; rdfs:subPropertyOf sdmx-dimension:refPeriod ; rdfs:range xsd:dateTime ; qb:concept sdmx-concept:refPeriod . }"
+      "sparql": "WITH <http://dataCube/covidFree/context> INSERT { covidFreeContext:timestamp rdf:type rdf:Property, qb:DimensionProperty ; rdfs:label 'Result time'@en, 'Data rilevazione'@it ; rdfs:subPropertyOf sdmx-dimension:refPeriod ; rdfs:range xsd:dateTime ; qb:concept sdmx-concept:refPeriod . } WHERE {}"
     },
     "DELETE": {
       "sparql": "WITH <http://dataCube/covidFree> DELETE { ?s ?p ?o } WHERE { ?s ?p ?o }"
@@ -101,6 +102,26 @@
           "datatype": "xsd:dateTime"
         }
       }
+    },
+    "FIX_EXISTING_VALUE": {
+      "sparql": "WITH <http://dataCube/covidFree> DELETE { ?observation covidFreeContext:dailyPositiveCases ?oldValue } INSERT { ?observation covidFreeContext:dailyPositiveCases ?newValue } WHERE {?observation rdf:type qb:Observation; qb:dataSet covidFreeContext:contagiGiornalieri ; covidFreeContext:region ?region ;  covidFreeContext:timestamp  ?timestamp ; sdmx-attribute:unitMeasure unit:Number ; covidFreeContext:dailyPositiveCases ?oldValue . }",
+      "forcedBindings": {
+        "region": {
+          "type": "uri"
+        },
+        "timestamp": {
+          "type": "literal",
+          "datatype": "xsd:dateTime"
+        },
+        "newValue": {
+          "type": "literal",
+          "datatype": "xsd:integer"
+        },
+        "oldValue": {
+          "type": "literal",
+          "datatype": "xsd:integer"
+        }
+      }
     }
   },
   "queries": {
@@ -109,6 +130,9 @@
     },
     "GET_DATACUBE_OBSERVATIONS": {
       "sparql": "SELECT ?region ?timestamp ?value FROM <http://dataCube/covidFree> FROM <http://covid19/context> WHERE {?observation rdf:type qb:Observation; qb:dataSet covidFreeContext:contagiGiornalieri ; covidFreeContext:region ?regionUri ;  covidFreeContext:timestamp  ?timestamp ; sdmx-attribute:unitMeasure unit:Number ; covidFreeContext:dailyPositiveCases ?value . ?regionUri gn:name ?region . }"
+    },
+    "GET_EXISTING_OBSERVATIONS": {
+      "sparql": "SELECT ?region ?timestamp ?value FROM <http://dataCube/covidFree> WHERE {?observation rdf:type qb:Observation; qb:dataSet covidFreeContext:contagiGiornalieri ; covidFreeContext:region ?region ;  covidFreeContext:timestamp  ?timestamp ; sdmx-attribute:unitMeasure unit:Number ; covidFreeContext:dailyPositiveCases ?value . }"
     }
   }
 }

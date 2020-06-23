@@ -54,38 +54,38 @@ public class ConsumerCovidFree extends Consumer {
 		dao.createTable();
 	}
 	
-//	private void persist(List<Bindings> results) {
-//		List<ObservationDTO> list = new ArrayList<>();
-//		if(results.size() >= 1) {
-//			for (Bindings result : results) {
-//				ObservationDTO entry = new ObservationDTO();
-//				entry.setId(++obsId);
-//				entry.setRegion(result.getValue("region"));
-//				entry.setTimestamp(DateHelper.toUTC(result.getValue("timestamp")));
-//				entry.setValue(Integer.parseInt(result.getValue("value")));
-//				list.add(entry);
-//			}
-//			dao.createAll(list);
-//		}
-//		System.out.println("Persisted " + list.size() + " observations.");
-//	}
-	
 	private void persist(List<Bindings> results) {
-		int count = 0;
-		for (Bindings result : results) {
-			ObservationDTO entry = new ObservationDTO();
-			entry.setId(++obsId);
-			entry.setRegion(result.getValue("region"));
-			entry.setTimestamp(DateHelper.toUTC(result.getValue("timestamp")));
-			entry.setValue(Integer.parseInt(result.getValue("value")));
-			if (dao.create(entry)) {
-				count++;
-			} else {
-				System.out.println("Failed: "+result.getValue("region")+" "+DateHelper.toUTC(result.getValue("timestamp")));
+		List<ObservationDTO> list = new ArrayList<>();
+		if(results.size() >= 1) {
+			for (Bindings result : results) {
+				ObservationDTO entry = new ObservationDTO();
+				entry.setId(++obsId);
+				entry.setRegion(result.getValue("region"));
+				entry.setTimestamp(DateHelper.toUTC(result.getValue("timestamp")));
+				entry.setValue(Integer.parseInt(result.getValue("value")));
+				list.add(entry);
 			}
+			dao.createAll(list);
 		}
-		System.out.println("Persisted " + count + " observations.");
+		System.out.println("Persisted " + list.size() + " observations.");
 	}
+	
+//	private void persist(List<Bindings> results) {
+//		int count = 0;
+//		for (Bindings result : results) {
+//			ObservationDTO entry = new ObservationDTO();
+//			entry.setId(++obsId);
+//			entry.setRegion(result.getValue("region"));
+//			entry.setTimestamp(DateHelper.toUTC(result.getValue("timestamp")));
+//			entry.setValue(Integer.parseInt(result.getValue("value")));
+//			if (dao.create(entry)) {
+//				count++;
+//			} else {
+//				System.out.println("Failed: "+result.getValue("region")+" "+DateHelper.toUTC(result.getValue("timestamp")));
+//			}
+//		}
+//		System.out.println("Persisted " + count + " observations.");
+//	}
 	
 	private void remove(List<Bindings> results) {
 		int count = 0;
