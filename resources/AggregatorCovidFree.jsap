@@ -126,13 +126,13 @@
   },
   "queries": {
     "GET_OBSERVATIONS": {
-      "sparql": "SELECT ?region ?timestamp ?value WHERE {GRAPH <http://covid19/context> {?region rdf:type gn:Feature; gn:featureCode <http://www.geonames.org/ontology#A.ADM1> . } GRAPH <http://covid19/observation/history> {?uri rdf:type sosa:Observation ; sosa:hasFeatureOfInterest ?region ; sosa:observedProperty <http://covid19#DailyPositiveCases> ; sosa:resultTime ?timestamp ;sosa:hasResult ?resultUri . ?resultUri rdf:type qudt:QuantityValue; qudt:numericValue ?value .}}"
-    },
-    "GET_DATACUBE_OBSERVATIONS": {
-      "sparql": "SELECT ?region ?timestamp ?value FROM <http://dataCube/covidFree> FROM <http://covid19/context> WHERE {?observation rdf:type qb:Observation; qb:dataSet covidFreeContext:contagiGiornalieri ; covidFreeContext:region ?regionUri ;  covidFreeContext:timestamp  ?timestamp ; sdmx-attribute:unitMeasure unit:Number ; covidFreeContext:dailyPositiveCases ?value . ?regionUri gn:name ?region . }"
+      "sparql": "SELECT ?region ?timestamp ?value WHERE {GRAPH <http://covid19/context> {?region rdf:type gn:Feature; gn:featureCode <http://www.geonames.org/ontology#A.ADM1> . } GRAPH <http://covid19/observation/history> {?uri rdf:type sosa:Observation ; sosa:hasFeatureOfInterest ?region ; sosa:observedProperty <http://covid19#DailyPositiveCases> ; sosa:resultTime ?timestamp ;sosa:hasResult ?resultUri . ?resultUri rdf:type qudt:QuantityValue; qudt:numericValue ?value . FILTER(?timestamp > '2021-01-01T00:00:00Z'^^xsd:dateTime)}}"
     },
     "GET_EXISTING_OBSERVATIONS": {
-      "sparql": "SELECT ?region ?timestamp ?value FROM <http://dataCube/covidFree> WHERE {?observation rdf:type qb:Observation; qb:dataSet covidFreeContext:contagiGiornalieri ; covidFreeContext:region ?region ;  covidFreeContext:timestamp  ?timestamp ; sdmx-attribute:unitMeasure unit:Number ; covidFreeContext:dailyPositiveCases ?value . }"
+      "sparql": "SELECT ?region ?timestamp ?value FROM <http://dataCube/covidFree> WHERE {?observation rdf:type qb:Observation; qb:dataSet covidFreeContext:contagiGiornalieri ; covidFreeContext:region ?region ;  covidFreeContext:timestamp  ?timestamp ; sdmx-attribute:unitMeasure unit:Number ; covidFreeContext:dailyPositiveCases ?value . FILTER(?timestamp > '2021-01-01T00:00:00Z'^^xsd:dateTime)}"
+    },
+    "GET_DATACUBE_OBSERVATIONS": {
+      "sparql": "SELECT ?region ?timestamp ?value FROM <http://dataCube/covidFree> FROM <http://covid19/context> WHERE {?observation rdf:type qb:Observation; qb:dataSet covidFreeContext:contagiGiornalieri ; covidFreeContext:region ?regionUri ;  covidFreeContext:timestamp  ?timestamp ; sdmx-attribute:unitMeasure unit:Number ; covidFreeContext:dailyPositiveCases ?value . ?regionUri gn:name ?region . FILTER(?timestamp > '2021-01-01T00:00:00Z'^^xsd:dateTime)}"
     }
   }
 }

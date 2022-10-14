@@ -244,6 +244,7 @@ public class MySqlObservationDAO {
 							VALUE + " INT NOT NULL, " +
 							"UNIQUE (" + REGION + ", " + TIMESTAMP + ") "
 						+ ")";
+			System.out.println(create);
 			stmt.execute(create);
 			outcome = true;
 			stmt.close();
@@ -262,7 +263,8 @@ public class MySqlObservationDAO {
 			Statement stmt = conn.createStatement();
 			String drop = 
 					"DROP " +
-						"TABLE " + TABLE;	
+						"TABLE " + TABLE;
+			System.out.println(drop);
 			stmt.execute(drop);
 			outcome = true;
 			stmt.close();

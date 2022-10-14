@@ -7,9 +7,10 @@ import it.unibo.arces.wot.sepa.commons.exceptions.SEPABindingsException;
 import it.unibo.arces.wot.sepa.commons.exceptions.SEPAPropertiesException;
 import it.unibo.arces.wot.sepa.commons.exceptions.SEPAProtocolException;
 import it.unibo.arces.wot.sepa.commons.exceptions.SEPASecurityException;
+import it.unibo.arces.wot.sepa.commons.response.ErrorResponse;
 import it.unibo.arces.wot.sepa.commons.response.QueryResponse;
 import it.unibo.arces.wot.sepa.commons.response.Response;
-import it.unibo.arces.wot.sepa.commons.security.ClientSecurityManager;
+import it.unibo.arces.wot.sepa.commons.sparql.ARBindingsResults;
 import it.unibo.arces.wot.sepa.commons.sparql.Bindings;
 import it.unibo.arces.wot.sepa.commons.sparql.BindingsResults;
 import it.unibo.arces.wot.sepa.commons.sparql.RDFTermLiteral;
@@ -23,9 +24,9 @@ public class AggregatorCovidFree extends Aggregator {
 
 	private List<Bindings> existingData = null;
 	
-	public AggregatorCovidFree(JSAP appProfile, String subscribeID, String updateID, ClientSecurityManager sm)
-			throws SEPAProtocolException, SEPASecurityException {
-		super(appProfile, subscribeID, updateID, sm);
+	public AggregatorCovidFree(JSAP appProfile, String subscribeID, String updateID)
+			throws SEPAProtocolException, SEPASecurityException, SEPAPropertiesException {
+		super(appProfile, subscribeID, updateID);
 	}
 
 	@Override
@@ -60,8 +61,8 @@ public class AggregatorCovidFree extends Aggregator {
 						}else {
 							// L'observation "binding" è già presente nel DataCube MA IL VALORE RISULTA ERRATO!
 							// AZIONE: dobbiamo correggere il valore dell'observation pre-esistente
-							fixValue(region, timestamp, value, b.getValue("value"));
-							toUpdate = false;
+							fixValue(region, timestamp, value, b.getValue("value"));  // L'update avviene qui!
+							toUpdate = false;  // Il normale update non va fatto!
 						}
 						break;
 					}
@@ -95,7 +96,7 @@ public class AggregatorCovidFree extends Aggregator {
 		Producer fixContext;
 		String updateID = "FIX_EXISTING_VALUE";
 		try {
-			fixContext = new Producer(appProfile, updateID, null);
+			fixContext = new Producer(appProfile, updateID);
 			fixContext.setUpdateBindingValue("region", new RDFTermURI(region));
 			fixContext.setUpdateBindingValue("timestamp", new RDFTermLiteral(timestamp));
 			fixContext.setUpdateBindingValue("newValue", new RDFTermLiteral(newValue));
@@ -116,7 +117,7 @@ public class AggregatorCovidFree extends Aggregator {
 
 		JSAP appProfile = new JSAP("resources/AggregatorCovidFree.jsap");
 
-		AggregatorCovidFree app = new AggregatorCovidFree(appProfile, "GET_OBSERVATIONS", "INSERT_OBSERVATION", null);
+		AggregatorCovidFree app = new AggregatorCovidFree(appProfile, "GET_OBSERVATIONS", "INSERT_OBSERVATION");
 //		app.exec("DELETE");
 //		app.exec("DELETE_CONTEXT");
 //		app.exec("CREATE_DATASET");
@@ -125,10 +126,23 @@ public class AggregatorCovidFree extends Aggregator {
 //		app.exec("CREATE_MEASURE");
 //		app.exec("CREATE_DIMENSION_REGION");
 //		app.exec("CREATE_DIMENSION_TIMESTAMP");
+		
+		
+		Producer deleteContext;
+		try {
+			deleteContext = new Producer(appProfile, "DELETE_SINCE");
+			deleteContext.setUpdateBindingValue("since", new RDFTermLiteral("2021-09-30T00:00:00+02:00"));
+			deleteContext.update();
+			deleteContext.close();
+		} catch (SEPAProtocolException | SEPASecurityException | SEPAPropertiesException | SEPABindingsException
+				| IOException e) {
+			System.err.println("Something went wrong during execution of " + "DELETE_SINCE");
+		}
+		
 
 		app.existingData = app.query("GET_EXISTING_OBSERVATIONS");
 		
-		app.subscribe(5000);
+		app.subscribe(5000L, 3L);
 
 		synchronized (app) {
 			try {
@@ -143,7 +157,7 @@ public class AggregatorCovidFree extends Aggregator {
 	private void exec(String updateID) {
 		Producer deleteContext;
 		try {
-			deleteContext = new Producer(appProfile, updateID, null);
+			deleteContext = new Producer(appProfile, updateID);
 			deleteContext.update();
 			deleteContext.close();
 		} catch (SEPAProtocolException | SEPASecurityException | SEPAPropertiesException | SEPABindingsException
@@ -156,8 +170,8 @@ public class AggregatorCovidFree extends Aggregator {
 		GenericClient queryContext = null;
 		List<Bindings> results = null;
 		try {
-			queryContext = new GenericClient(appProfile, null, null);
-			Response r = queryContext.query(queryID, null, 5000);
+			queryContext = new GenericClient(appProfile, null);
+			Response r = queryContext.query(queryID, null, 5000L, 3L);
 			if (!r.isQueryResponse())
 				System.exit(1);
 			QueryResponse queryResponse = (QueryResponse) r;
@@ -172,6 +186,36 @@ public class AggregatorCovidFree extends Aggregator {
 			}
 		}
 		return results;
+	}
+
+	@Override
+	public void onResults(ARBindingsResults results) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onRemovedResults(BindingsResults results) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onError(ErrorResponse errorResponse) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSubscribe(String spuid, String alias) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUnsubscribe(String spuid) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

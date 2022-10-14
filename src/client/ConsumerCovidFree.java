@@ -10,7 +10,8 @@ import it.unibo.arces.wot.sepa.commons.exceptions.SEPABindingsException;
 import it.unibo.arces.wot.sepa.commons.exceptions.SEPAPropertiesException;
 import it.unibo.arces.wot.sepa.commons.exceptions.SEPAProtocolException;
 import it.unibo.arces.wot.sepa.commons.exceptions.SEPASecurityException;
-import it.unibo.arces.wot.sepa.commons.security.ClientSecurityManager;
+import it.unibo.arces.wot.sepa.commons.response.ErrorResponse;
+import it.unibo.arces.wot.sepa.commons.sparql.ARBindingsResults;
 import it.unibo.arces.wot.sepa.commons.sparql.Bindings;
 import it.unibo.arces.wot.sepa.commons.sparql.BindingsResults;
 import it.unibo.arces.wot.sepa.pattern.Consumer;
@@ -22,16 +23,9 @@ public class ConsumerCovidFree extends Consumer {
 	private int obsId = 0;
 	private MySqlObservationDAO dao = new MySqlObservationDAO();
 	
-	public ConsumerCovidFree(JSAP appProfile, String subscribeID, ClientSecurityManager sm)
-			throws SEPAProtocolException, SEPASecurityException {
-		super(appProfile, subscribeID, sm);
-	}
-
-	@Override
-	public void onBrokenConnection() {
-		System.out.println("BROKEN CONNECTION");
-		this.init();
-		super.onBrokenConnection();
+	public ConsumerCovidFree(JSAP appProfile, String subscribeID)
+			throws SEPAProtocolException, SEPASecurityException, SEPAPropertiesException {
+		super(appProfile, subscribeID);
 	}
 
 	@Override
@@ -65,9 +59,14 @@ public class ConsumerCovidFree extends Consumer {
 				entry.setValue(Integer.parseInt(result.getValue("value")));
 				list.add(entry);
 			}
-			dao.createAll(list);
+			try {
+				dao.createAll(list);
+				System.out.println("Persisted " + list.size() + " observations.");
+			}catch(Exception e) {
+				System.out.println("Error:" + list.size() + " observations were not persisted.");
+			}
 		}
-		System.out.println("Persisted " + list.size() + " observations.");
+		
 	}
 	
 //	private void persist(List<Bindings> results) {
@@ -105,9 +104,9 @@ public class ConsumerCovidFree extends Consumer {
 		ConsumerCovidFree app = null;
 		try {
 			appProfile = new JSAP("resources/AggregatorCovidFree.jsap");
-			app = new ConsumerCovidFree(appProfile, "GET_DATACUBE_OBSERVATIONS", null);
+			app = new ConsumerCovidFree(appProfile, "GET_DATACUBE_OBSERVATIONS");
 			app.init();
-			app.subscribe(5000);
+			app.subscribe(5000L, 3L);
 		} catch (SEPAPropertiesException | SEPASecurityException | SEPAProtocolException | SEPABindingsException e1) {
 			e1.printStackTrace();
 		}
@@ -124,5 +123,29 @@ public class ConsumerCovidFree extends Consumer {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void onResults(ARBindingsResults results) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onError(ErrorResponse errorResponse) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onSubscribe(String spuid, String alias) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onUnsubscribe(String spuid) {
+		// TODO Auto-generated method stub
+		
 	}
 }
